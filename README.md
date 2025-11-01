@@ -1,1 +1,0 @@
-# verifydandy.com
