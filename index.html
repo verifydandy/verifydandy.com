@@ -21,7 +21,7 @@
             position: relative; 
         }
         
-        /* 1. ESTILOS DEL FONDO */
+        /* 1. ESTILOS DEL FONDO (0.6s Deslizamiento) */
         #dandy-background {
             position: absolute;
             top: 0;
@@ -33,7 +33,7 @@
             background-position: center;
             background-size: cover;
             transform: translateY(100%);
-            transition: transform 0.6s ease-out; 
+            transition: transform 0.6s ease-out; /* Duración clave: 0.6s */
         }
 
         #dandy-background.slide-in {
@@ -80,46 +80,39 @@
             pointer-events: none; 
         }
 
-        /* 3. ESTILOS DEL BOTÓN (MODIFICADOS) */
+        /* 3. ESTILOS DEL BOTÓN (AJUSTADOS) */
         #verify-button {
             position: absolute;
             z-index: 50; 
             
-            /* NUEVA POSICIÓN: Más arriba (55%) */
-            top: 55%; 
+            /* NUEVA POSICIÓN Y TAMAÑO */
+            top: 45%; /* Más arriba */
             left: 50%;
-            
-            /* NUEVO TAMAÑO: Más pequeño */
-            width: 150px; 
+            width: 120px; /* Más pequeño */
             height: auto;
 
-            /* ESTADO INICIAL PARA DESLIZAMIENTO: Mantenemos el -50% horizontal */
-            /* Se añade un 100% vertical para que empiece fuera de la vista (como el fondo) */
+            /* Estado inicial para deslizamiento */
             transform: translate(-50%, 100%);
             
-            /* Transición para el efecto de deslizamiento */
-            transition: transform 0.5s ease-out; 
-            opacity: 0; /* Lo hacemos invisible para que la opacidad aparezca con el deslizamiento */
+            /* Sincronización con el fondo (0.6s) */
+            transition: transform 0.6s ease-out; 
+            opacity: 0; 
             cursor: pointer;
         }
 
-        /* Clase para activar el deslizamiento y hacerlo visible */
         #verify-button.active {
-            /* Vuelve a su posición normal (la definida por top: 55%) */
             transform: translate(-50%, 0); 
             opacity: 1; 
-            
-            /* Aplicar la animación de salto LUEGO del deslizamiento (se activa con un retraso en JS) */
-            /* animation: miniJump 1s ease-in-out infinite; */ 
         }
         
-        /* Definición de la animación de mini saltos (duración cambiada a 1s) */
+        /* Definición de la animación de mini saltos con pausa de 1s */
         @keyframes miniJump {
-            0%, 100% {
-                transform: translate(-50%, 0); /* Posición normal */
+            /* 0% a 20% es el salto de 0.4s; 20% a 100% es la pausa de 1s. */
+            0%, 20%, 100% {
+                transform: translate(-50%, 0); /* Posición normal / Aterrizaje / Pausa */
             }
-            50% {
-                transform: translate(-50%, -5px); /* Salto de 5px hacia arriba */
+            10% {
+                transform: translate(-50%, -5px); /* Pico del salto */
             }
         }
         
@@ -161,14 +154,13 @@
                     
                     // --- SECUENCIA DE APARICIÓN DEL BOTÓN ---
                     
-                    // a) Desliza el botón desde abajo (0.5s)
+                    // a) Inicia el deslizamiento del botón (0.6s, sincronizado con el fondo)
                     verifyButton.classList.add('active'); 
                     
-                    // b) Aplica la animación de salto 0.5s después de que empiece el deslizamiento
-                    // (para que el botón se deslice primero y luego empiece a saltar)
+                    // b) Aplica la animación de salto EXACTAMENTE al terminar el deslizamiento
                     setTimeout(() => {
-                        // Aplicamos la animación de salto con JavaScript para controlar el timing
-                        verifyButton.style.animation = 'miniJump 1s ease-in-out infinite';
+                        // Duración total de la animación de salto: 1.4s (0.4s salto + 1s pausa)
+                        verifyButton.style.animation = 'miniJump 1.4s ease-in-out infinite';
                         
                         // Opcional: Agregar funcionalidad al click del botón
                         verifyButton.addEventListener('click', function() {
@@ -176,7 +168,7 @@
                             // Aquí iría window.location.href = "siguiente_pagina.html"; 
                         });
                         
-                    }, 500); // 500ms = duración de la transición de deslizamiento del botón
+                    }, 600); // 600ms = duración de la transición de deslizamiento del botón
 
                 }, 300); // 300ms = duración de la transición de desvanecimiento del splash
 
