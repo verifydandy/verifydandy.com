@@ -7,33 +7,58 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>DH Dandy Hats</title>
 
-    <!-- Iconos (ubicados en /static) -->
+    <!-- Iconos -->
     <link rel="icon" type="image/webp" href="static/dhlogo.webp">
     <link rel="apple-touch-icon" type="image/webp" href="static/dhlogo.webp">
 
     <style>
+        /* Reset básico */
         html, body {
             margin: 0;
             padding: 0;
-            height: 65vh; /* permite scroll para ocultar barra Safari */
-            background-color: #000; /* fondo negro */
+            height: 100vh; /* cubrir toda la pantalla */
+            width: 100vw;
+            background-color: #000;
+            overflow: hidden; /* opcional: evita scroll innecesario */
+        }
+
+        /* Contenedor del fondo */
+        body::before {
+            content: "";
+            position: fixed;
+            top: env(safe-area-inset-top);
+            left: env(safe-area-inset-left);
+            right: env(safe-area-inset-right);
+            bottom: env(safe-area-inset-bottom);
             background-image: url("static/dandyfondo2.PNG");
             background-repeat: no-repeat;
-            background-position: center 24px; /* ligeramente más abajo */
-            background-size: 125% auto; /* un poco más grande */
+            background-position: center;
+            background-size: cover; /* ajusta para cubrir toda la pantalla */
+            z-index: -1; /* detrás del contenido */
+        }
+
+        /* Contenido centrado opcional */
+        .contenido {
             position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: sans-serif;
         }
     </style>
 </head>
 <body>
+    <div class="contenido">
+        <h1>Bienvenido a DH Dandy Hats</h1>
+    </div>
+
     <script>
-        // Scroll pequeño al cargar para ocultar barra Safari
+        // Pequeño scroll inicial para ocultar la barra Safari en iOS
         window.addEventListener('load', () => {
             setTimeout(() => { window.scrollTo(0, 1); }, 100);
         });
     </script>
 </body>
 </html>
-
-
-
