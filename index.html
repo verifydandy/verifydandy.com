@@ -2,9 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
@@ -17,26 +15,110 @@
         html, body {
             margin: 0;
             padding: 0;
-            
-            /* SOLUCIÓN 1: Ocupar el 100% de la altura de la pantalla */
             height: 100vh;
-            
-            /* SOLUCIÓN 2 (Mejora): Evita el "rebote" de scroll en iOS */
             overflow: hidden; 
-
             background-color: #000; /* Color de fondo por si falla la imagen */
             background-image: url("static/dandyfondo2.PNG");
             background-repeat: no-repeat;
-            
-            /* SOLUCIÓN 3: Centrar y cubrir todo el espacio */
             background-position: center;
             background-size: cover;
-            
-            /* Asegura que el contenido (si lo agregas) fluya correctamente */
             position: relative; 
         }
+        
+        /* --- INICIO: CÓDIGO AÑADIDO PARA SPLASH SCREEN --- */
+        
+        #splash-screen {
+            position: fixed; /* Se superpone a todo */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh; /* Ocupa toda la pantalla */
+            background-color: #000; /* Fondo negro inicial */
+            z-index: 1000; /* Se asegura de estar al frente */
+            
+            /* Centra el logo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Transición para el desvanecimiento de salida */
+            opacity: 1;
+            transition: opacity 0.5s ease-out; /* Animación de salida profesional */
+        }
+
+        #splash-logo {
+            /* Tamaño "profesional, no tan grande". ¡Ajusta este valor! */
+            width: 150px; 
+            height: auto;
+            
+            /* Estado inicial de la animación */
+            transform: scale(0);
+            opacity: 0;
+            
+            /* Aplicamos la animación 'zoomIn' */
+            /* nombre   duración   timing    retraso  estado-final */
+            animation: zoomIn 1s   ease-out   0.2s     forwards;
+        }
+
+        /* Definición de la animación de entrada */
+        @keyframes zoomIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Clase que usará JavaScript para ocultar el splash */
+        #splash-screen.hidden {
+            opacity: 0;
+            /* Evita que bloquee clics después de desaparecer */
+            pointer-events: none; 
+        }
+        
+        /* --- FIN: CÓDIGO AÑADIDO --- */
+        
     </style>
 </head>
 <body>
+
+    <div id="splash-screen">
+        <img id="splash-logo" src="static/dandlogo.PNG" alt="Dandy Hats Logo">
+    </div>
+    
+    <script>
+        // Espera a que toda la página (imágenes, etc.) se haya cargado
+        window.addEventListener('load', function() {
+            
+            const splashScreen = document.getElementById('splash-screen');
+            
+            // Define cuánto tiempo quieres que el logo sea visible
+            // La animación dura 1s. Démosle 1s más de espera. Total = 2000ms.
+            // Ajusta este valor (en milisegundos) a tu gusto.
+            const splashDuration = 2000; // 2 segundos en total
+            
+            setTimeout(() => {
+                // 1. Añade la clase 'hidden' para iniciar el desvanecimiento (0.5s)
+                splashScreen.classList.add('hidden');
+                
+                // 2. (Opcional pero recomendado) 
+                //    Oculta el elemento completamente después de que termine 
+                //    la animación de salida (0.5s)
+                setTimeout(() => {
+                    if (splashScreen) {
+                        splashScreen.style.display = 'none';
+                    }
+                }, 500); // 500ms = 0.5s (debe coincidir con la 'transition' en el CSS)
+
+            }, splashDuration);
+        });
+    </script>
+    
     </body>
 </html>
+    </body>
+</html>
+
