@@ -24,19 +24,20 @@
             position: relative;
         }
 
-        /* GIF en la esquina superior derecha, compatible con modo app en iPhone */
-        .corner-gif {
-            position: fixed; /* siempre visible */
-            top: calc(env(safe-area-inset-top, 0px) + 33px); /* respeta notch + margen */
-            right: 20px;
-            width: 78px;
+        /* GIF centrado en la pantalla */
+        .center-gif {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px; /* ajusta tamaño si quieres */
             height: auto;
             z-index: 10;
         }
     </style>
 </head>
 <body>
-    <img src="https://verifydandy.com/images/DandyHats.gif" alt="Dandy Hats GIF" class="corner-gif">
+    <img src="https://dangerousthings-forum.b-cdn.net/original/2X/6/656aebfb0747e782f123f2633274e932a2a48227.gif" alt="Dandy Hats GIF" class="center-gif">
 
     <script>
         // Scroll pequeño al cargar para ocultar barra Safari
