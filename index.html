@@ -21,7 +21,7 @@
             position: relative; 
         }
         
-        /* 1. ESTILOS DEL FONDO (0.6s Deslizamiento) */
+        /* 1. ESTILOS DEL FONDO */
         #dandy-background {
             position: absolute;
             top: 0;
@@ -33,7 +33,7 @@
             background-position: center;
             background-size: cover;
             transform: translateY(100%);
-            transition: transform 0.6s ease-out; /* Duración clave: 0.6s */
+            transition: transform 0.6s ease-out; 
         }
 
         #dandy-background.slide-in {
@@ -80,22 +80,19 @@
             pointer-events: none; 
         }
 
-        /* 3. ESTILOS DEL BOTÓN (AJUSTADOS) */
+        /* 3. ESTILOS DEL BOTÓN (MODIFICADOS A TU ÚLTIMA VERSIÓN) */
         #verify-button {
             position: absolute;
             z-index: 50; 
             
-            /* NUEVA POSICIÓN Y TAMAÑO */
-            top: 40%; /* Más arriba */
+            /* TUS AJUSTES DE TAMAÑO Y POSICIÓN */
+            top: 40%; 
             left: 50%;
-            width: 148px; /* Más pequeño */
+            width: 148px; 
             height: auto;
 
-            /* Estado inicial para deslizamiento */
             transform: translate(-50%, 100%);
-            
-            /* Sincronización con el fondo (0.6s) */
-            transition: transform 0.3s ease-out; 
+            transition: transform 0.3s ease-out; /* Tu transición de 0.3s */
             opacity: 0; 
             cursor: pointer;
         }
@@ -105,15 +102,40 @@
             opacity: 1; 
         }
         
-        /* Definición de la animación de mini saltos con pausa de 1s */
         @keyframes miniJump {
-            /* 0% a 20% es el salto de 0.4s; 20% a 100% es la pausa de 1s. */
             0%, 20%, 100% {
-                transform: translate(-50%, 0); /* Posición normal / Aterrizaje / Pausa */
+                transform: translate(-50%, 0); 
             }
             10% {
-                transform: translate(-50%, -5px); /* Pico del salto */
+                transform: translate(-50%, -5px); 
             }
+        }
+
+        /* 4. NUEVOS ESTILOS PARA NFC MESSAGE Y GIF */
+        .nfc-item {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 100%); /* Inicialmente fuera de la pantalla, abajo */
+            opacity: 0;
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out; /* Sincronizado con el fondo */
+            z-index: 60; /* Encima del botón y el fondo */
+        }
+
+        .nfc-item.show {
+            transform: translate(-50%, 0); /* Se desliza a su posición */
+            opacity: 1;
+        }
+
+        #nfc-message {
+            bottom: 30%; /* Posición del mensaje (ajusta si es necesario) */
+            width: 250px; /* Tamaño del mensaje (ajusta si es necesario) */
+            height: auto;
+        }
+
+        #nfc-gif {
+            bottom: 10%; /* Posición del GIF (ajusta si es necesario) */
+            width: 180px; /* Tamaño del GIF (ajusta si es necesario) */
+            height: auto;
         }
         
     </style>
@@ -123,6 +145,9 @@
     <div id="dandy-background"></div>
 
     <img id="verify-button" src="static/buttonverify.PNG" alt="Verificar">
+
+    <img id="nfc-message" class="nfc-item" src="static/nfcmsagge.PNG" alt="NFC Message">
+    <img id="nfc-gif" class="nfc-item" src="static/NFC.gif" alt="NFC Animation">
 
     <div id="splash-screen">
         <img id="splash-logo" src="static/dandlogo.PNG" alt="Dandy Hats Logo">
@@ -134,43 +159,47 @@
             const splashScreen = document.getElementById('splash-screen');
             const background = document.getElementById('dandy-background');
             const verifyButton = document.getElementById('verify-button');
+            const nfcMessage = document.getElementById('nfc-message');
+            const nfcGif = document.getElementById('nfc-gif');
             
-            // Tiempo de espera total antes de la transición (1.8s)
             const splashDuration = 1800; 
             
             setTimeout(() => {
-                
-                // 1. Activa la animación de deslizamiento del fondo (0.6s)
                 background.classList.add('slide-in');
-
-                // 2. Oculta el Splash Screen (0.3s)
                 splashScreen.classList.add('hidden');
                 
-                // 3. Oculta el elemento splash completamente y activa el botón
                 setTimeout(() => {
                     if (splashScreen) {
                         splashScreen.style.display = 'none';
                     }
                     
-                    // --- SECUENCIA DE APARICIÓN DEL BOTÓN ---
-                    
-                    // a) Inicia el deslizamiento del botón (0.6s, sincronizado con el fondo)
                     verifyButton.classList.add('active'); 
                     
-                    // b) Aplica la animación de salto EXACTAMENTE al terminar el deslizamiento
                     setTimeout(() => {
-                        // Duración total de la animación de salto: 1.4s (0.4s salto + 1s pausa)
                         verifyButton.style.animation = 'miniJump 1.4s ease-in-out infinite';
                         
-                        // Opcional: Agregar funcionalidad al click del botón
+                        // --- FUNCIONALIDAD DEL BOTÓN ---
                         verifyButton.addEventListener('click', function() {
-                            alert("¡Botón de verificación presionado!");
-                            // Aquí iría window.location.href = "siguiente_pagina.html"; 
+                            // Detener la animación de salto del botón
+                            verifyButton.style.animation = 'none'; 
+                            // Opcional: Ocultar el botón después de presionar
+                            verifyButton.style.opacity = '0';
+                            verifyButton.style.pointerEvents = 'none'; // Deshabilita clics
+
+                            // Activar la animación de deslizamiento para los elementos NFC
+                            nfcMessage.classList.add('show');
+                            nfcGif.classList.add('show');
+
+                            // Opcional: Aquí puedes añadir más lógica
+                            // por ejemplo, redireccionar después de un tiempo
+                            // setTimeout(() => {
+                            //     window.location.href = "otra_pagina_nfc.html"; 
+                            // }, 2000); // Redirecciona después de 2 segundos
                         });
                         
-                    }, 600); // 600ms = duración de la transición de deslizamiento del botón
+                    }, 300); // Duración de la transición de deslizamiento del botón (tu 0.3s)
 
-                }, 300); // 300ms = duración de la transición de desvanecimiento del splash
+                }, 300); // Duración de la transición de desvanecimiento del splash
 
             }, splashDuration);
         });
@@ -178,8 +207,3 @@
     
 </body>
 </html>
-
-
-
-
-
