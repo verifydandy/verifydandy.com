@@ -1,48 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>DH Dandy Hats</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-    <!-- Iconos (ubicados en /static) -->
-    <link rel="icon" type="image/webp" href="static/dhlogo.webp">
-    <link rel="apple-touch-icon" type="image/webp" href="static/dhlogo.webp">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 65vh; /* permite scroll para ocultar barra Safari */
-            background-color: #000; /* fondo negro */
-            background-image: url("static/dandyfondo2.PNG");
-            background-repeat: no-repeat;
-            background-position: center 24px; /* ligeramente más abajo */
-            background-size: 165% auto; /* un poco más grande */
-            position: relative;
-        }
+<title>DH Dandy Hats</title>
 
-        /* GIF en la esquina superior derecha, compatible con modo app en iPhone */
-        .corner-gif {
-            position: fixed; /* siempre visible */
-            top: calc(env(safe-area-inset-top, 0px) + 33px); /* respeta notch + margen */
-            right: 20px;
-            width: 78px;
-            height: auto;
-            z-index: 10;
-        }
-    </style>
+<link rel="icon" type="image/webp" href="static/dhlogo.webp">
+<link rel="apple-touch-icon" type="image/webp" href="static/dhlogo.webp">
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%; /* Con esto es suficiente para llenar la pantalla */
+
+        /* Color de fondo base por si la imagen tarda en cargar */
+        background-color: #000;
+        background-image: url("static/dandyfondo2.PNG");
+        background-repeat: no-repeat;
+        background-position: center center;
+
+        /*
+          'cover' asegura que la imagen cubra toda el área,
+          manteniendo su proporción. Esto PUEDE recortar
+          los bordes de la imagen si es necesario.
+        */
+        background-size: cover;
+
+        /* Evita el scroll o rebote en la página */
+        overflow: hidden;
+    }
+</style>
 </head>
 <body>
-    <img src="https://verifydandy.com/images/DandyHats.gif" alt="Dandy Hats GIF" class="corner-gif">
-
-    <script>
-        // Scroll pequeño al cargar para ocultar barra Safari
-        window.addEventListener('load', () => {
-            setTimeout(() => { window.scrollTo(0, 1); }, 100);
-        });
-    </script>
 </body>
 </html>
