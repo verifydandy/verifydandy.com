@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>DH Dandy Hats</title>
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="icon" type="image/webp" href="static/dhlogo.webp">
+    <link rel="apple-touch-icon" type="image/webp" href="static/dhlogo.webp">
 
-<title>DH Dandy Hats</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            
+            /* SOLUCIÓN 1: Ocupar el 100% de la altura de la pantalla */
+            height: 100vh;
+            
+            /* SOLUCIÓN 2 (Mejora): Evita el "rebote" de scroll en iOS */
+            overflow: hidden; 
 
-<link rel="icon" type="image/webp" href="static/dhlogo.webp">
-<link rel="apple-touch-icon" type="image/webp" href="static/dhlogo.webp">
-
-<style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%; /* Con esto es suficiente para llenar la pantalla */
-
-        /* Color de fondo base por si la imagen tarda en cargar */
-        background-color: #000;
-        background-image: url("static/dandyfondo2.PNG");
-        background-repeat: no-repeat;
-        background-position: center center;
-
-        /*
-          'cover' asegura que la imagen cubra toda el área,
-          manteniendo su proporción. Esto PUEDE recortar
-          los bordes de la imagen si es necesario.
-        */
-        background-size: cover;
-
-        /* Evita el scroll o rebote en la página */
-        overflow: hidden;
-    }
-</style>
+            background-color: #000; /* Color de fondo por si falla la imagen */
+            background-image: url("static/dandyfondo2.PNG");
+            background-repeat: no-repeat;
+            
+            /* SOLUCIÓN 3: Centrar y cubrir todo el espacio */
+            background-position: center;
+            background-size: cover;
+            
+            /* Asegura que el contenido (si lo agregas) fluya correctamente */
+            position: relative; 
+        }
+    </style>
 </head>
 <body>
-</body>
+    </body>
 </html>
