@@ -80,17 +80,14 @@
             pointer-events: none; 
         }
 
-        /* 3. ESTILOS DEL BOTÓN (MODIFICADOS A TU ÚLTIMA VERSIÓN) */
+        /* 3. ESTILOS DEL BOTÓN VERIFY */
         #verify-button {
             position: absolute;
             z-index: 50; 
-            
-            /* TUS AJUSTES DE TAMAÑO Y POSICIÓN */
             top: 40%; 
             left: 50%;
             width: 148px; 
             height: auto;
-
             transform: translate(-50%, 100%);
             transition: transform 0.3s ease-out; /* Tu transición de 0.3s */
             opacity: 0; 
@@ -111,31 +108,63 @@
             }
         }
 
-        /* 4. NUEVOS ESTILOS PARA NFC MESSAGE Y GIF */
+        /* 4. NUEVOS ESTILOS PARA NFC MESSAGE Y GIF (APARICIÓN INSTANTÁNEA) */
         .nfc-item {
             position: absolute;
             left: 50%;
-            transform: translate(-50%, 100%); /* Inicialmente fuera de la pantalla, abajo */
+            /* Empezará en su posición final, pero oculto por opacidad */
+            transform: translate(-50%, 0); 
             opacity: 0;
-            transition: transform 0.6s ease-out, opacity 0.6s ease-out; /* Sincronizado con el fondo */
-            z-index: 60; /* Encima del botón y el fondo */
+            /* Solo transición de opacidad, NO de transform */
+            transition: opacity 0.3s ease-out; 
+            z-index: 60; 
+            pointer-events: none; /* No clickable si no es visible */
         }
 
         .nfc-item.show {
-            transform: translate(-50%, 0); /* Se desliza a su posición */
-            opacity: 1;
+            opacity: 1; /* Aparece instantáneamente en su lugar */
+            pointer-events: auto; /* Se vuelve clickable */
+        }
+
+        /* ESTADO OCULTO DESLIZANDO HACIA ABAJO */
+        .nfc-item.hide-slide {
+            transform: translate(-50%, 100%); /* Desliza hacia abajo */
+            opacity: 0;
+            transition: transform 0.5s ease-in, opacity 0.5s ease-in; /* Transición de salida */
+            pointer-events: none;
         }
 
         #nfc-message {
-            bottom: 0%; /* Posición del mensaje (ajusta si es necesario) */
-            width: 393px; /* Tamaño del mensaje (ajusta si es necesario) */
+            bottom: 0%; 
+            width: 393px; 
             height: auto;
         }
 
         #nfc-gif {
-            bottom: 12%; /* Posición del GIF (ajusta si es necesario) */
-            width: 213px; /* Tamaño del GIF (ajusta si es necesario) */
+            bottom: 12%; 
+            width: 213px; 
             height: auto;
+        }
+
+        /* 5. ESTILOS DEL BOTÓN INFERIOR INVISIBLE (NUEVO) */
+        #hide-nfc-button {
+            position: absolute;
+            bottom: 0; /* Pegado a la parte inferior */
+            left: 0;
+            width: 100%;
+            height: 20%; /* Altura suficiente para ser clicable */
+            background-color: transparent; /* Invisible */
+            border: none;
+            cursor: pointer;
+            z-index: 70; /* Encima de los elementos NFC */
+            opacity: 0; /* Invisible, pero puede ser clicable */
+            pointer-events: none; /* No clickable inicialmente */
+            transition: opacity 0.3s ease-out; /* Para que aparezca/desaparezca suavemente */
+        }
+
+        #hide-nfc-button.show {
+            opacity: 1; /* Para que sea 'visible' al ojo del JS */
+            pointer-events: auto; /* Hacerlo clicable */
         }
         
     </style>
@@ -149,6 +178,8 @@
     <img id="nfc-message" class="nfc-item" src="static/nfcmsagge.PNG" alt="NFC Message">
     <img id="nfc-gif" class="nfc-item" src="static/NFC.gif" alt="NFC Animation">
 
+    <button id="hide-nfc-button"></button>
+
     <div id="splash-screen">
         <img id="splash-logo" src="static/dandlogo.PNG" alt="Dandy Hats Logo">
     </div>
@@ -161,6 +192,9 @@
             const verifyButton = document.getElementById('verify-button');
             const nfcMessage = document.getElementById('nfc-message');
             const nfcGif = document.getElementById('nfc-gif');
+            const hideNFCButton = document.getElementById('hide-nfc-button'); // Nuevo botón
+
+            let nfcVisible = false; // Estado para controlar si NFC está visible
             
             const splashDuration = 1800; 
             
@@ -178,23 +212,42 @@
                     setTimeout(() => {
                         verifyButton.style.animation = 'miniJump 1.4s ease-in-out infinite';
                         
-                        // --- FUNCIONALIDAD DEL BOTÓN ---
+                        // --- FUNCIONALIDAD DEL BOTÓN VERIFY ---
                         verifyButton.addEventListener('click', function() {
-                            // Detener la animación de salto del botón
-                            verifyButton.style.animation = 'none'; 
-                            // Opcional: Ocultar el botón después de presionar
-                            verifyButton.style.opacity = '0';
-                            verifyButton.style.pointerEvents = 'none'; // Deshabilita clics
+                            if (!nfcVisible) { // Solo si NFC no está visible
+                                verifyButton.style.animation = 'none'; // Detener animación de salto
+                                
+                                // Mostrar NFC (sin animacion de deslizamiento)
+                                nfcMessage.classList.add('show');
+                                nfcGif.classList.add('show');
+                                
+                                // Asegúrate de que no tenga la clase de ocultar
+                                nfcMessage.classList.remove('hide-slide');
+                                nfcGif.classList.remove('hide-slide');
+                                
+                                hideNFCButton.classList.add('show'); // Hacer clicable el botón de ocultar
+                                nfcVisible = true;
+                            }
+                        });
+                        
+                        // --- FUNCIONALIDAD DEL BOTÓN INVISIBLE PARA OCULTAR NFC ---
+                        hideNFCButton.addEventListener('click', function() {
+                            if (nfcVisible) {
+                                // Deslizar los elementos NFC hacia abajo
+                                nfcMessage.classList.add('hide-slide');
+                                nfcGif.classList.add('hide-slide');
+                                
+                                // Remover la clase 'show' para iniciar el desvanecimiento de opacidad
+                                nfcMessage.classList.remove('show');
+                                nfcGif.classList.remove('show');
 
-                            // Activar la animación de deslizamiento para los elementos NFC
-                            nfcMessage.classList.add('show');
-                            nfcGif.classList.add('show');
-
-                            // Opcional: Aquí puedes añadir más lógica
-                            // por ejemplo, redireccionar después de un tiempo
-                            // setTimeout(() => {
-                            //     window.location.href = "otra_pagina_nfc.html"; 
-                            // }, 2000); // Redirecciona después de 2 segundos
+                                // Deshabilitar el botón de ocultar
+                                hideNFCButton.classList.remove('show');
+                                
+                                // Reiniciar la animación del botón 'verify'
+                                verifyButton.style.animation = 'miniJump 1.4s ease-in-out infinite';
+                                nfcVisible = false;
+                            }
                         });
                         
                     }, 300); // Duración de la transición de deslizamiento del botón (tu 0.3s)
@@ -207,18 +260,3 @@
     
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
