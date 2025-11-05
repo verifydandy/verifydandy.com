@@ -47,17 +47,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Color negro con 60% de opacidad */
-            z-index: 40; /* Debe estar detrás de los elementos NFC (z-index: 60) pero delante del fondo y botón de verificar */
+            background-color: rgba(0, 0, 0, 0.6); 
+            z-index: 40; 
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.4s ease-in-out, visibility 0s linear 0.4s; /* La visibilidad cambia después de la opacidad de salida */
+            transition: opacity 0.4s ease-in-out, visibility 0s linear 0.4s; 
         }
 
         #dark-overlay.active {
             opacity: 1;
             visibility: visible;
-            transition: opacity 0.4s ease-in-out; /* Sin retardo en la visibilidad al aparecer */
+            transition: opacity 0.4s ease-in-out; 
         }
         
         /* 2. ESTILOS DEL SPLASH SCREEN (se mantienen) */
@@ -134,7 +134,7 @@
             left: 50%;
             transform: translate(-50%, 100%); 
             opacity: 0; 
-            transition: transform 0.5s ease-out, opacity 0.5s ease-out; /* Agregada transición de opacidad */
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out; 
             z-index: 60; 
             pointer-events: none; 
         }
@@ -149,7 +149,7 @@
         .nfc-item.hide-slide {
             transform: translate(-50%, 100%); 
             opacity: 0;
-            transition: transform 0.7s ease-in, opacity 0.7s ease-in; /* ¡ANIMACIÓN DE SALIDA RÁPIDA! */
+            transition: transform 0.7s ease-in, opacity 0.7s ease-in; 
             pointer-events: none;
         }
 
@@ -157,21 +157,20 @@
             bottom: 0%; 
             width: 393px; 
             height: auto;
-            cursor: pointer; /* Lo hacemos clickeable */
+            cursor: pointer; 
         }
 
         #nfc-gif {
-            bottom: 12%; /* Se mantiene el valor original para el GIF */
-            width: 213px; /* Se mantiene el valor original para el GIF */
+            bottom: 12%; 
+            width: 213px; 
             height: auto;
-            /* Le quitamos el cursor, solo el mensaje es clickeable ahora */
-            transition: all 0.5s ease-out; /* Añadido para una transición suave del tamaño */
+            transition: all 0.5s ease-out; /* Para que la transición de tamaño sea suave */
         }
 
-        /* CLASE PARA NFC2.PNG: ahora más grande y más abajo */
+        /* CLASE PARA NFC2.PNG: más grande y más abajo */
         #nfc-gif.nfc-gif-grande {
-            bottom: 3%; /* MODIFICADO: Más abajo */
-            width: 370px; /* MODIFICADO: Más grande */
+            bottom: 3%; /* Más abajo */
+            width: 370px; /* Más grande */
         }
 
         /* 5. ESTILOS DEL BOTÓN INFERIOR INVISIBLE (se mantienen) */
@@ -194,6 +193,46 @@
             opacity: 1; 
             pointer-events: auto; 
         }
+
+        /* 6. NUEVA SECCIÓN DE DESLIZAMIENTO (slide-screen) */
+        #slide-screen {
+            /* Ocupa toda la pantalla, fijo */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 100; /* Por encima de todo lo demás */
+            overflow: hidden;
+
+            /* Configuración inicial: fuera de la pantalla a la derecha */
+            transform: translateX(100%);
+            /* Animación de deslizamiento */
+            transition: transform 0.6s ease-out;
+
+            /* Estilos de fondo de la segunda pantalla */
+            background-color: #000;
+            background-image: url("static/dandyfondo.PNG");
+            background-repeat: no-repeat;
+            background-position: center 24px;
+            background-size: 106% auto;
+        }
+
+        /* Clase para activar el deslizamiento */
+        #slide-screen.slide-in-left {
+            transform: translateX(0);
+        }
+
+        /* Estilos del GIF de la esquina */
+        .corner-gif {
+            position: fixed;
+            /* 'top' se calculará en JS */
+            top: 0; 
+            right: 20px;
+            width: 78px;
+            height: auto;
+            z-index: 110; 
+        }
         
     </style>
 </head>
@@ -211,6 +250,10 @@
     <div id="splash-screen">
         <img id="splash-logo" src="static/dandlogo.PNG" alt="Dandy Hats Logo">
     </div>
+
+    <div id="slide-screen">
+        <img src="https://verifydandy.com/images/DandyHats.gif" alt="Dandy Hats GIF" class="corner-gif">
+    </div>
     
     <script>
         window.addEventListener('load', function() {
@@ -221,12 +264,26 @@
             const nfcMessage = document.getElementById('nfc-message');
             const nfcGif = document.getElementById('nfc-gif');
             const hideNFCButton = document.getElementById('hide-nfc-button');
-            const darkOverlay = document.getElementById('dark-overlay'); // Nueva referencia
+            const darkOverlay = document.getElementById('dark-overlay'); 
+            const slideScreen = document.getElementById('slide-screen'); // Nueva referencia
+            const cornerGif = slideScreen.querySelector('.corner-gif'); // Nueva referencia
 
             let nfcVisible = false; 
-            let scanAttempted = false; // Nuevo estado para controlar la imagen del NFC
+            let scanAttempted = false; 
             
             const splashDuration = 1800; 
+
+            // FUNCIÓN para ajustar la posición superior del GIF de la esquina (para dispositivos iOS)
+            function adjustCornerGifTop() {
+                // Obtiene el valor de 'safe-area-inset-top' (si está disponible)
+                const safeAreaTop = getComputedStyle(document.documentElement).getPropertyValue('padding-top') || '0px';
+                // La suma es el valor del CSS: calc(env(safe-area-inset-top, 0px) + 33px)
+                const topValue = `calc(${safeAreaTop} + 33px)`; 
+                cornerGif.style.top = topValue;
+            }
+            
+            // Llamar al ajuste en la carga
+            adjustCornerGifTop();
             
             setTimeout(() => {
                 background.classList.add('slide-in');
@@ -259,19 +316,34 @@
                             }
                         });
                         
-                        // --- NUEVA FUNCIONALIDAD: Clic en nfc-message ---
+                        // --- FUNCIONALIDAD: Clic en nfc-message ---
                         nfcMessage.addEventListener('click', function() {
                             if (nfcVisible && !scanAttempted) {
                                 // Reemplazar el GIF con la imagen NFC2.PNG
                                 nfcGif.src = "static/NFC2.PNG"; 
-                                // AÑADIR LA CLASE para hacer NFC2.PNG más grande
+                                // AÑADIR LA CLASE para hacer NFC2.PNG más grande y abajo
                                 nfcGif.classList.add('nfc-gif-grande'); 
                                 
-                                scanAttempted = true; // Marca que el escaneo ha sido intentado
+                                scanAttempted = true; 
+                                
+                                // *** LÓGICA DE DESLIZAMIENTO DESPUÉS DE 2 SEGUNDOS ***
+                                setTimeout(() => {
+                                    // Iniciar el deslizamiento de la nueva pantalla desde la derecha
+                                    slideScreen.classList.add('slide-in-left');
+                                    
+                                    // Ocultar los elementos de la vista anterior
+                                    darkOverlay.classList.remove('active'); 
+                                    nfcMessage.classList.add('hide-slide');
+                                    nfcGif.classList.add('hide-slide');
+                                    hideNFCButton.classList.remove('show');
+                                    verifyButton.classList.remove('active');
+                                    verifyButton.style.animation = 'none';
+
+                                }, 2000); // 2000 milisegundos = 2 segundos
                             }
                         });
                         
-                        // --- FUNCIONALIDAD DEL BOTÓN INFERIOR INVISIBLE PARA OCULTAR NFC ---
+                        // --- FUNCIONALIDAD DEL BOTÓN INVISIBLE PARA OCULTAR NFC (Solo si el deslizamiento no ocurre) ---
                         hideNFCButton.addEventListener('click', function() {
                             if (nfcVisible) {
                                 nfcMessage.classList.add('hide-slide');
@@ -281,18 +353,17 @@
                                 nfcGif.classList.remove('show');
                                 
                                 hideNFCButton.classList.remove('show');
-                                darkOverlay.classList.remove('active'); // Desactivar el fondo oscuro
+                                darkOverlay.classList.remove('active'); 
                                 
                                 // Restaurar el GIF original y el estado de intento
                                 nfcGif.src = "static/NFC.gif";
-                                // QUITAR LA CLASE cuando se restaura el GIF original
                                 nfcGif.classList.remove('nfc-gif-grande'); 
                                 scanAttempted = false;
                                 
-                                // Retrasa el reinicio de la animación para que ocurra DESPUÉS
+                                // Retrasa el reinicio de la animación 
                                 setTimeout(() => {
                                     verifyButton.style.animation = 'miniJump 1.4s ease-in-out infinite';
-                                }, 700); // Usamos 700ms, que es la duración de la transición 'hide-slide'
+                                }, 700); 
                                 
                                 nfcVisible = false;
                             }
@@ -308,4 +379,3 @@
     
 </body>
 </html>
-
